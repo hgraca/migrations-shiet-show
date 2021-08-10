@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  shietshow-web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    user: ${DOCKER_USER_ID}
+    ports:
+      - 10080:80
+    environment:
+      DATE_TIMEZONE: "Europe/Amsterdam"
+      ###> Xdebug ###
+      PHP_IDE_CONFIG: "serverName=${PROJECT}" # This is needed to debug from CLI (ie. while running tests)
+      XDEBUG_CONFIG: cli_color=1 client_host=${HOST_IP} xdebug.client_port=9003 discover_client_host=false idekey=PHPSTORM log=/var/www/var/xdebug.log log_level=7 mode=develop,debug output_dir=/var/www/var/xdebug profiler_output_name=cachegrind.out.%p
+      ###< Xdebug ###
+    volumes:
+      - ../:/var/www # so we can easily change the application code running in the container
+      - ~/.composer:/.composer # so we can use the host composer cache
+      - ./apache-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./php.ini:/usr/local/etc/php/php.ini # so we can easily change php config
+      - ./opcache.ini:/usr/local/etc/php/conf.d/opcache.ini # Disabling Opcache during development :)
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini # so we can easily change xdebug config
+      - ./hosts:/etc/hosts # so we can easily change hosts config
+      # Specified because syslink from image is overwritten by above line
+      - ../var/tmp:/tmp # legacy session files are stored in /tmp, this way we can access them and reuse them between container rebuilds
+      - ../var/coverage:/opt/phpstorm-coverage
+      - ../var/mysql-files:/var/lib/mysql-files/ # So that we can create tests that create files with mysql and are deleted by php
+
+  shietshow-mysql:
+    image: mysql:5.7
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_DATABASE: branded_pages
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Europe/Amsterdam
+    volumes:
+      - ../var/mysql:/var/lib/mysql # so that we don't lose our dev/test DBs when we destroy the container
+      - ../var/mysql-files:/var/lib/mysql-files/
+    command: ['mysqld', '--sql_mode=STRICT_TRANS_TABLES', '--default-time-zone=+02:00']
+#  , '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci'
+
+networks:
+  default:
+    external: # This way the network is always the same, predictable, so we can get the IP it is using, and docker won't create a new adapter each time we run it.
+      name: ${DOCKER_NETWORK}

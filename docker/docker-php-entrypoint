@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+
+# Copied from PHP image: first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+    set -- php "$@"
+fi
+
+# Defaults to an app server
+role=${CONTAINER_ROLE:-app}
+
+echo "Container role: $role"
+
+if [ "$role" = "boot" ]; then
+    #Here we can run the command to boot our app, seeder, migrations, etc.? This container runnes once and exits.
+#    exec php artisan app:boot
+    exec php build/build.php;
+elif [ "$role" = "worker" ]; then
+    exec php /var/www/bin/console messenger:consume gt_command_transport gt_event_transport --time-limit=1800 --limit=50;
+elif [ "$role" = "scheduler" ]; then
+    while [ true ]
+    do
+        # We sleep, to simulate, as crontab does, running every minute
+        sleep 60
+    done
+else
+    # Execute command specified on container
+    exec "$@"
+fi
