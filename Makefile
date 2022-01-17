@@ -110,10 +110,19 @@ docker-rebuild-images:  ## Rebuild the docker images
 	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml build shietshow-web
 
 docker-install-deps:  ## Install project dependencies
-	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'composer install'
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c './composer.phar install'
 
 docker-update-deps:  ## Update project dependencies
-	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'composer update "doctrine/doctrine-migrations-bundle:3.4.0"'
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c './composer.phar update -W "doctrine/doctrine-migrations-bundle:3.4.0"'
+
+docker-composer-why-not:  ## composer debug: Why not
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c './composer.phar why-not "doctrine/doctrine-migrations-bundle" "3.4.0"'
+
+docker-composer-diagnose:  ## composer debug: diagnose composer
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c './composer.phar diagnose'
+
+docker-composer-self-update:  ## Update composer executable ot latest version
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c './composer.phar self-update'
 ###############################
 ## Maintenaince
 ###############################
