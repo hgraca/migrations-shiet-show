@@ -111,6 +111,9 @@ docker-rebuild-images:  ## Rebuild the docker images
 
 docker-install-deps:  ## Install project dependencies
 	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'composer install'
+
+docker-update-deps:  ## Update project dependencies
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'composer update "doctrine/doctrine-migrations-bundle:3.4.0"'
 ###############################
 ## Maintenaince
 ###############################
