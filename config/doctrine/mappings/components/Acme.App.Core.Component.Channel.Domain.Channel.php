@@ -41,7 +41,7 @@ $builder->setTable('channel__channel')
     )
     ->addField(
         'stateEnum',
-        'channel_state_enum_type',
+        'channel_state_enum',
         [
             'length' => 50,
             'nullable' => false,

@@ -34,7 +34,7 @@ return function (ContainerConfigurator $container) use ($ignoredTables): void {
             'types' => [
                 'channel_id' => ChannelIdType::class,
                 'channel_config' => ChannelConfigType::class,
-                'channel_state_enum_type' => ChannelStateEnumType::class,
+                'channel_state_enum' => ChannelStateEnumType::class,
                 'channel_type_id' => ChannelTypeIdType::class,
                 'channel_type_enum' => ChannelTypeEnumType::class,
                 'client_id' => ClientIdType::class,
