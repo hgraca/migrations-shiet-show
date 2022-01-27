@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM php:8.0-apache
 
 # OS setup
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -7,6 +7,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         gnupg \
         git \
         zlib1g-dev \
+        libzip-dev \
         libmemcached-dev \
         libfreetype6 \
         libfontconfig1 \
@@ -31,7 +32,7 @@ RUN pecl install -o -f xdebug redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install pdo_mysql zip gd mysqli gettext exif bcmath intl calendar \
     && docker-php-ext-configure intl \
-    && docker-php-ext-configure gd --with-gd --with-freetype-dir --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd \
     && docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer

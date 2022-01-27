@@ -190,15 +190,6 @@
     "league/mime-type-detection": {
         "version": "1.7.0"
     },
-    "league/uri": {
-        "version": "6.4.0"
-    },
-    "league/uri-components": {
-        "version": "2.2.0"
-    },
-    "league/uri-interfaces": {
-        "version": "2.3.0"
-    },
     "lexik/jwt-authentication-bundle": {
         "version": "2.5",
         "recipe": {
@@ -307,14 +298,8 @@
     "ramsey/uuid": {
         "version": "4.2.0"
     },
-    "roave/security-advisories": {
-        "version": "dev-latest"
-    },
     "sebastian/diff": {
         "version": "4.0.4"
-    },
-    "spatie/url-signer": {
-        "version": "1.2.1"
     },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.7"
