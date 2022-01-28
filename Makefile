@@ -81,6 +81,9 @@ docker-create-network: ## Create the docker network to be used by this project d
 docker-up:  ## Start the application and keep it running and showing the logs
 	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml up --remove-orphans ${CONTAINERS}
 
+docker-up-deamon:  ## Start the application and keep it running and showing the logs
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml up -d --remove-orphans ${CONTAINERS}
+
 docker-up-daemon:  ## Start the application and keep it running in the background
 	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml up --remove-orphans -d ${CONTAINERS}
 
@@ -103,7 +106,7 @@ docker-run-migrations:  ## Run migrations that have not yet been executed, from 
 	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'make migration-migrate'
 
 docker-create-db-dev:  ## Recreate the dev database, including dev fixtures. Run this from outside the docker container.
-	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'make .create-db-dev'
+	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c 'make .reset-db'
 
 docker-rebuild-images:  ## Rebuild the docker images
 	- docker image rm -f docker_shietshow-web
@@ -123,6 +126,19 @@ docker-composer-diagnose:  ## composer debug: diagnose composer
 
 docker-composer-self-update:  ## Update composer executable ot latest version
 	DOCKER_USER_ID=${HOST_USER_ID} DOCKER_NETWORK=${DOCKER_NETWORK} HOST_IP=${HOST_IP} PROJECT=${PROJECT} docker-compose -f docker/docker-compose.yml exec shietshow-web sh -c './composer.phar self-update'
+
+docker-run-test:
+	make docker-up-deamon
+	rm -f build/Migration/Version/*.php
+	make docker-install-deps
+	make docker-create-db-dev
+	make docker-generate-migration
+	make docker-run-migrations
+	make docker-generate-migration
+	make docker-run-migrations
+	make docker-generate-migration
+	make docker-down
+
 ###############################
 ## Maintenaince
 ###############################
@@ -131,3 +147,9 @@ ENV ?= dev
 clear-cache:
 	rm -rf var/cache/${ENV}/*
 	bin/console cache:clear --env=${ENV}
+
+.reset-db: ## Recreate the dev database
+	- GT_APP_ENV=dev bin/console doctrine:database:drop --force
+	- rm -rf var/mysql/*
+	- rm -rf var/mysql-files/*
+	- GT_APP_ENV=dev bin/console doctrine:database:create

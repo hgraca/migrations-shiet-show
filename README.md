@@ -10,14 +10,22 @@ However, if we generate migrations again, it will detect changes and generate so
 
 It uses docker, so you can just run the following in the CLI:
 ```bash
-make docker-create-network
-make docker-up
-make docker-install-deps
-make docker-generate-migration
-make docker-run-migrations
-make docker-generate-migration
+make docker-create-network # You only need to run this once
+make docker-run-test
 ```
-Check the last migration file created, in `build/Migration/Version`.
+This last command will run the following:
+```bash
+	make docker-up-deamon
+	make docker-install-deps
+	make docker-create-db-dev
+	make docker-generate-migration
+	make docker-run-migrations
+	make docker-generate-migration
+	make docker-run-migrations
+	make docker-generate-migration
+	make docker-down
+```
+Check the migration files created, in `build/Migration/Version`.
 
 We can try running that migration and creating a new one, surely that would put everything in sync...
 ```bash
