@@ -23,21 +23,21 @@ services:
       - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini # so we can easily change xdebug config
       - ./hosts:/etc/hosts # so we can easily change hosts config
       # Specified because syslink from image is overwritten by above line
-      - ../var/tmp:/tmp # legacy session files are stored in /tmp, this way we can access them and reuse them between container rebuilds
-      - ../var/coverage:/opt/phpstorm-coverage
-      - ../var/mysql-files:/var/lib/mysql-files/ # So that we can create tests that create files with mysql and are deleted by php
+#      - ../var/tmp:/tmp # legacy session files are stored in /tmp, this way we can access them and reuse them between container rebuilds
+#      - ../var/coverage:/opt/phpstorm-coverage
+#      - ../var/mysql-files:/var/lib/mysql-files/ # So that we can create tests that create files with mysql and are deleted by php
 
   shietshow-mysql:
     image: mysql:5.7
     ports:
       - 13306:3306
     environment:
-      MYSQL_DATABASE: branded_pages
+      MYSQL_DATABASE: shietshow
       MYSQL_ROOT_PASSWORD: root
       TZ: Europe/Amsterdam
-    volumes:
-      - ../var/mysql:/var/lib/mysql # so that we don't lose our dev/test DBs when we destroy the container
-      - ../var/mysql-files:/var/lib/mysql-files/
+#    volumes:
+#      - ../var/mysql:/var/lib/mysql # so that we don't lose our dev/test DBs when we destroy the container
+#      - ../var/mysql-files:/var/lib/mysql-files/
     command: ['mysqld', '--sql_mode=STRICT_TRANS_TABLES', '--default-time-zone=+02:00']
 #  , '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci'
 
