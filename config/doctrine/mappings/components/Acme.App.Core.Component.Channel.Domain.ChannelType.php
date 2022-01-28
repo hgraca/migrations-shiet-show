@@ -12,7 +12,13 @@ $builder->setTable('channel__channel_type')
     ->addField(
         'id',
         'channel_type_id',
-        ['id' => true]
+        [
+            'id' => true,
+            'options' => [
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ],
+        ]
     )
     ->addField(
         'name',
